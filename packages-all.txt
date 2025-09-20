@@ -1,0 +1,69 @@
+﻿systemd-sysv
+netselect-apt
+
+firefox-esr
+thunderbird
+
+libreoffice
+telegram-desktop
+krita
+gimp
+
+gcc
+g++
+binutils
+gcc-mingw-w64
+g++-mingw-w64
+binutils-mingw-w64
+
+
+# eclipse - https://www.eclipse.org/downloads/packages/
+nodejs
+
+arduino
+gcc-xtensa-lx106
+binutils-xtensa-lx106
+msp430mcu
+
+
+open-vm-tools
+virtualbox
+virtualbox-ext-pack
+dosbox
+
+
+duckstation - https://github.com/stenzek/duckstation/releases/latest
+pcsxr
+pcsx2 - https://github.com/PCSX2/pcsx2/releases
+retroarch
+
+zfsutils-linux
+sshfs
+
+radeontop
+
+software-properties-common
+ttf-mscorefonts-installer
+
+
+- NOT FOUND ON DEBIAN REPO -
+- GITHUB PERMALINK -
+duckstation		https://api.github.com/repos/stenzek/duckstation/releases/latest
+rpcs3			https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest
+pcsx2			https://api.github.com/repos/PCSX2/pcsx2/releases/latest
+
+
+$r = Invoke-RestMethod -Uri $url
+$r.assets.browser_download_url -match '\.AppImage\Z' | %{ wget -cnd $_ }
+
+
+- HTML PERMALINK -
+virtualbox		https://www.virtualbox.org/wiki/Linux_Downloads
+
+$r = Invoke-WebRequest -Uri $url
+$r.Links | Select-Object href | %{ if ($_.href -match 'Debian') { wget -cnd $_.href; break}  }
+
+
+
+
+

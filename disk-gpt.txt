@@ -1,0 +1,29 @@
+# gdisk (GPT disk)
+
+lsblk
+gdisk -l /dev/sdb
+gdisk /dev/sdb
+?
+d
+o
+w
+
+
+
+# create zfs partition label
+gdisk /dev/sdb
+2 or 3
+?
+l
+zfs
+n
+1
+a504	# Hex code or GUID
+w
+
+# gdisk vs sgdisk
+gdisk works interactively.
+sgdisk works in a non-interactive way.
+
+
+

@@ -1,0 +1,21 @@
+
+# fdisk is older program that use MBR primary/logical partition, 
+# use newer GPT instead
+
+# show disk device
+ls -l /dev/disk/by-path
+lsblk
+
+
+
+# mount
+mkdir /mnt/HDD1
+mount -t auto /dev/sdb1 /mnt/HDD1
+lsblk -f
+
+
+# partition disk
+fdisk -l
+fdisk -l /dev/sda 
+fdisk /dev/sda 
+

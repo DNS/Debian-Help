@@ -1,0 +1,19 @@
+# zfs-fuse is deprecated / not maintained!
+
+apt remove -y zfs-fuse
+
+
+
+#######################################
+
+apt install -y zfs-fuse
+
+/sbin/zpool import -fd /dev/disk/by-label vhd1
+
+# Common Problem
+- Disk that use newer ZFS (freebsd) can't be read on older zfs-fuse (debian)
+  Solution: format on debian then read on freebsd, but don't upgrade the older zfs version on the disk
+
+
+
+

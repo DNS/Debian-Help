@@ -1,0 +1,7 @@
+[EDIT] /etc/apt/sources.list.d/ubuntu.sources
+http://id.archive.ubuntu.com/
+http://sg.archive.ubuntu.com/
+http://my.archive.ubuntu.com/
+http://vn.archive.ubuntu.com/
+http://th.archive.ubuntu.com/
+http://ph.archive.ubuntu.com/

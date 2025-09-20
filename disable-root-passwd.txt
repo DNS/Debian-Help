@@ -1,0 +1,7 @@
+﻿sudo su
+
+passwd -d root
+passwd -d dns
+
+passwd root
+passwd dns

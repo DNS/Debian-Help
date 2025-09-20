@@ -1,0 +1,3 @@
+# run multiple times
+hdparm -t /dev/sda1
+

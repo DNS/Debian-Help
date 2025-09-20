@@ -1,0 +1,9 @@
+﻿
+; add new shell
+[EDIT] /etc/shells
+
+; Change default shell
+chsh
+chsh -s /usr/bin/pwsh
+chsh -s /usr/local/bin/bash UserName123
+

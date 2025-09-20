@@ -1,0 +1,24 @@
+# deb cdrom:[Official Debian GNU/Linux Live 12.5.0 kde 2024-02-10T11:07:25Z]/ bookworm main non-free-firmware
+
+deb https://kartolo.sby.datautama.net.id/debian/ bookworm contrib main
+deb-src https://kartolo.sby.datautama.net.id/debian/ bookworm contrib main
+
+deb https://kartolo.sby.datautama.net.id/debian-security/ bookworm-security contrib main
+deb-src https://kartolo.sby.datautama.net.id/debian-security/ bookworm-security contrib main
+
+# bookworm-updates, to get updates before a point release is made;
+# see https://www.debian.org/doc/manuals/debian-reference/ch02.en.html#_updates_and_backports
+deb https://kartolo.sby.datautama.net.id/debian/ bookworm-updates contrib main
+deb-src https://kartolo.sby.datautama.net.id/debian/ bookworm-updates contrib main
+
+# This system was installed using small removable media
+# (e.g. netinst, live or single CD). The matching "deb cdrom"
+# entries were disabled at the end of the installation process.
+# For information about how to configure apt package sources,
+# see the sources.list(5) manual.
+
+# fasttrack
+deb https://fasttrack.debian.net/debian-fasttrack/ bookworm-fasttrack main contrib
+deb https://fasttrack.debian.net/debian-fasttrack/ bookworm-backports-staging main contrib
+
+

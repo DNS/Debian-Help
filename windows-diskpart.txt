@@ -1,0 +1,25 @@
+# Notes:
+GPT disk doesn’t need a primary and logical partition. 
+It's different from an MBR disk.
+
+
+diskpart
+list disk
+select disk 1
+list partition
+select partition
+delete partition
+create partition primary
+format quick
+assign letter=x
+
+
+delete partition
+create partition extended
+create partition logical
+format quick
+assign letter=y
+
+exit
+
+

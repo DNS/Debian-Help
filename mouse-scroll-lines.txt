@@ -1,0 +1,5 @@
+﻿EDIT ~/.config/kdeglobals
+
+[KDE]
+WheelScrollLines=8
+

@@ -1,0 +1,8 @@
+﻿[EDIT] /etc/default/grub
+GRUB_TIMEOUT=1
+
+
+su
+update-grub
+grub-install
+
