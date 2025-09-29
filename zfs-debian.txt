@@ -45,7 +45,7 @@ parted /dev/sdc rm 1
 # format disk as zfs, specify different mountpoint, auto-mount
 lsblk
 zpool create -fm /HDD/vhd1 vhd1 /dev/sdc1
-zpool status
+zpool status -v
 zfs list
 
 
@@ -101,7 +101,7 @@ zfs upgrade vhd1
 
 
 ---------------------------
-# RAID 1, mirror, new empty disk
+# RAID 1, mirror, new empty disk ( /dev/sdb1 )
 lsblk
 zpool create -f vhd1 mirror /dev/sdc1 /dev/sdb1
 zfs set mountpoint=/HDD/vhd1 vhd1
@@ -113,7 +113,7 @@ wipefs -a /dev/sdb
 parted /dev/sdb mklabel GPT
 parted -a optimal /dev/sdb mkpart primary zfs 0% 100%
 zpool attach -f vhd1 /dev/sdc1 /dev/sdb1
-zpool status
+zpool status -v
 zfs list
 
 # no need to format /dev/sdb1 if you want to add mirror/RAID1,
@@ -134,17 +134,20 @@ zfs create -o casesensitivity=insensitive -o compression=on -o encryption=on -o 
 
 zfs get all vhd1/dataset1 | grep -i case
 
-echo 123 > test.txt
-echo 456 > TEST.TXT
-cat test.txt
 
-
-
-# decrypt dataset
+# mount decrypt dataset
 zfs mount -l vhd1/dataset1		(ask password prompt every reboot)
 zfs umount -f vhd1/dataset1
 
-# mount at boot using password/passphrase
+# decrypt dataset, one-liner (bash)
+echo 'My Password' | zfs umount -f vhd1/dataset1
+
+# decrypt dataset, one-liner (pwsh)
+'My Password' | zfs umount -f vhd1/dataset1
+
+
+
+# mount at boot using password/passphrase (prompt)
 	# bash
 	echo "echo 'My Password: It'"'"'s a nice day!' | zfs mount -l vhd1/dataset1" >> /etc/rc.local
 
@@ -154,11 +157,15 @@ zfs umount -f vhd1/dataset1
 
 chmod +x /etc/rc.local
 
+=============================
+
+# change password (prompt)
+zfs change-key -o keylocation=prompt -o keyformat=passphrase vhd1/dataset1
 
 
 ==============================
 
-# mount/unmount manually (rarely used)
+# mount/unmount manually (rarely used, use import instead)
 zfs mount -a
 zfs umount -a
 zfs mount vhd1
@@ -175,16 +182,30 @@ zpool import -af			# force mount all pools, including old disk
 zpool import -d	/dev/da1	# search for pools with block devices not located in /dev/dsk
 zpool import -f vhd1
 
+
+# eject/disconnect pool to be used in another computer
+zpool export -af
+zpool export -f vhd1
+
+# show available zpool, size
+zpool list
+
 ==============================
 
 
+# check for errors, maintenance (only works if the drive is mirrored)
+zfs scrub vhd1
 
 
+# check last error log
+zpool status -v
 
 
 ==============================
 
-zfs mount -l 'IronWolf-8TB/DNS-encrypted'
+
+==============================
+
 
 
 
