@@ -1,0 +1,207 @@
+apt-add-repository contrib
+apt install -y zfsutils-linux gdisk
+
+---------------
+
+# gdisk, Interactive
+# format disk as gpt, zfs
+lsblk
+gdisk /dev/sdc
+2 or 3		# select GPT
+?
+l
+zfs
+n
+1
+a504		# Hex code or GUID
+w
+
+
+lsblk
+zpool create -f vhd1 /dev/sda1
+chown -R dns:wheel /vhd1
+-----------
+
+# parted, One-liner
+# format disk as gpt, zfs
+lsblk
+wipefs -a /dev/sdc
+parted /dev/sdc mklabel GPT
+parted -a optimal /dev/sdc mkpart primary zfs 0% 100%
+
+lsblk
+zpool create -f vhd1 /dev/sda1
+chown -R dns:wheel /vhd1
+
+# check GPT or not
+parted /dev/sdc print
+
+# delete partion
+parted /dev/sdc rm 1
+
+
+-----------
+
+# format disk as zfs, specify different mountpoint, auto-mount
+lsblk
+zpool create -fm /HDD/vhd1 vhd1 /dev/sdc1
+zpool status -v
+zfs list
+
+
+# change mount point
+zfs set mountpoint=/HDD/vhd1 vhd1
+
+
+
+# change ownership
+groups dns
+chown -R dns:wheel /HDD/vhd1
+chown -R dns:dns /HDD/vhd1
+
+
+
+-----------
+
+# destroy pool
+zfs destroy -r vhd1
+zpool destroy -f vhd1
+zpool labelclear -f vhd1
+
+-----------
+
+# import
+ls /dev/disk/by-id/*
+zpool import -af
+zpool import /dev/sd*
+zpool import /dev/disk/by-id/*
+
+Always use the long /dev/disk/by-id/* aliases with ZFS. Using the /dev/sd* device nodes directly can cause sporadic import failures, especially on systems that have more than one storage pool.
+
+
+
+# eject/disconnect pool to be used in another computer
+zpool export -f vhd1
+
+
+
+-----------
+
+
+zfs mount
+
+zfs unmount -f vhd1
+zfs set mountpoint=/HDD/vhd1 vhd1
+zfs mount -a
+
+zfs upgrade vhd1
+
+
+
+
+
+---------------------------
+# RAID 1, mirror, new empty disk ( /dev/sdb1 )
+lsblk
+zpool create -f vhd1 mirror /dev/sdc1 /dev/sdb1
+zfs set mountpoint=/HDD/vhd1 vhd1
+chown -R dns:wheel /HDD/
+
+# RAID 1, mirror, add new disk to existing pool (old disk)
+lsblk
+wipefs -a /dev/sdb
+parted /dev/sdb mklabel GPT
+parted -a optimal /dev/sdb mkpart primary zfs 0% 100%
+zpool attach -f vhd1 /dev/sdc1 /dev/sdb1
+zpool status -v
+zfs list
+
+# no need to format /dev/sdb1 if you want to add mirror/RAID1,
+# just attach /dev/sdb1 to existing pool
+
+--------------------------
+# detach disk from pool (only applicable to mirror and replacing failed disk, can't be used on stripe/RAID 0)
+zpool detach vhd1 /dev/sdc1
+
+
+------------------------
+
+======================================
+
+
+# create dataset with property: insensitive, compression, encryption
+zfs create -o casesensitivity=insensitive -o compression=on -o encryption=on -o keylocation=prompt -o keyformat=passphrase vhd1/dataset1
+
+zfs get all vhd1/dataset1 | grep -i case
+
+
+# mount decrypt dataset
+zfs mount -l vhd1/dataset1		(ask password prompt every reboot)
+zfs umount -f vhd1/dataset1
+
+# decrypt dataset, one-liner (bash)
+echo 'My Password' | zfs umount -f vhd1/dataset1
+
+# decrypt dataset, one-liner (pwsh)
+'My Password' | zfs umount -f vhd1/dataset1
+
+
+
+# mount at boot using password/passphrase (prompt)
+	# bash
+	echo "echo 'My Password: It'"'"'s a nice day!' | zfs mount -l vhd1/dataset1" >> /etc/rc.local
+
+	# pwsh
+	"echo 'My Password: It's a nice day!' | zfs mount -l vhd1/dataset1" >> /etc/rc.local
+
+
+chmod +x /etc/rc.local
+
+=============================
+
+# change password (prompt)
+zfs change-key -o keylocation=prompt -o keyformat=passphrase vhd1/dataset1
+
+
+==============================
+
+# mount/unmount manually (rarely used, use import instead)
+zfs mount -a
+zfs umount -a
+zfs mount vhd1
+zfs umount -f vhd1
+
+
+
+==============================
+
+# import pool, mount
+zpool import				# search pools in old disk
+zpool import -a				# mount all pools
+zpool import -af			# force mount all pools, including old disk
+zpool import -d	/dev/da1	# search for pools with block devices not located in /dev/dsk
+zpool import -f vhd1
+
+
+# eject/disconnect pool to be used in another computer
+zpool export -af
+zpool export -f vhd1
+
+# show available zpool, size
+zpool list
+
+==============================
+
+
+# check for errors, maintenance (only works if the drive is mirrored)
+zfs scrub vhd1
+
+
+# check last error log
+zpool status -v
+
+
+==============================
+
+
+==============================
